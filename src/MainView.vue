@@ -6,12 +6,16 @@
           prepend-icon="mdi-view-dashboard"
           title="Home"
           value="home"
-        ></v-list-item>
+          href="/"
+        >
+        </v-list-item>
         <v-list-item
           prepend-icon="mdi-forum"
-          title="About"
-          value="about"
-        ></v-list-item>
+          title="Members"
+          value="Members"
+          href="members"
+        >
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
