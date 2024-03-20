@@ -1,8 +1,6 @@
 import axios from "axios";
 
-const url = "https://ice-members.onrender.com";
-
-console.log("proccess", process.env);
+const url = process.env.MEMBERS_URL;
 
 export async function getMembers() {
   const { data } = await axios.get(`${url}/members`);

@@ -1,9 +1,18 @@
 <template>
-  <div>
+  <div class="member-list_header">
+    <v-responsive max-width="350px">
+      <v-text-field
+        label="Buscar"
+        outlined
+        dense
+        prepend-inner-icon="mdi-magnify"
+        v-model="searchValue"
+      ></v-text-field>
+    </v-responsive>
     <v-btn @click="createNewMember">Create</v-btn>
   </div>
   <div>
-    <v-table>
+    <v-table v-show="false">
       <thead>
         <tr>
           <th class="text-left">Nombre</th>
@@ -14,7 +23,7 @@
       </thead>
       <tbody>
         <tr
-          v-for="member in members"
+          v-for="member in membersList"
           :key="member.name"
           @click="getMemberDetail(member)"
         >
@@ -25,11 +34,15 @@
         </tr>
       </tbody>
     </v-table>
+    <v-data-table
+      :items="membersList"
+      :headers="['Nombre', 'Apellido', 'Fecha de nacimiento', 'Celular']"
+    ></v-data-table>
   </div>
 </template>
 
 <script>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { getMembers } from "@/services/members";
 export default {
@@ -40,8 +53,18 @@ export default {
       members.value = await getMembers();
       console.log("members.value: ", members.value);
     });
+    const searchValue = ref("");
     const router = useRouter();
     const members = ref([]);
+
+    const membersList = computed(() => {
+      return searchValue.value
+        ? members.value.filter((member) =>
+            member.name.toLowerCase().includes(searchValue.value.toLowerCase())
+          )
+        : members.value;
+    });
+
     const getMemberDetail = (member) => {
       console.log(member);
     };
@@ -50,9 +73,21 @@ export default {
     };
     return {
       members,
+      searchValue,
+      membersList,
       getMemberDetail,
       createNewMember,
     };
   },
 };
 </script>
+
+<style lang="scss">
+.member-list_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  height: 60px;
+}
+</style>
