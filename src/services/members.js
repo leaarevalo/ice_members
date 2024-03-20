@@ -1,7 +1,18 @@
 import axios from "axios";
 
-const url = '';
+const url = "http://localhost:3000";
 
-export async function createMember(member) {
-  return axios.post(`${url}/members`, member);
+export async function getMembers() {
+  const { data } = await axios.get(`${url}/members`);
+  console.log("data", data);
+  return data;
+}
+
+export async function createNewMember(member) {
+  axios.post(`${url}/members/create`, {
+    name: member.name,
+    lastName: member.lastName,
+    phone: member.phone,
+    dateOfBirth: member.dateOfBirth,
+  });
 }

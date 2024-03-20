@@ -1,24 +1,27 @@
 <template>
   <div>
+    <v-btn @click="createNewMember">Create</v-btn>
+  </div>
+  <div>
     <v-table>
       <thead>
         <tr>
           <th class="text-left">Nombre</th>
-          <th class="text-left">Edad</th>
-          <th class="text-left">Domicilio</th>
+          <th class="text-left">Apellido</th>
+          <th class="text-left">Telefono</th>
           <th class="text-left">Fecha de nacimiento</th>
         </tr>
       </thead>
       <tbody>
         <tr
           v-for="member in members"
-          :key="member.id"
+          :key="member.name"
           @click="getMemberDetail(member)"
         >
           <td class="text-left">{{ member.name }}</td>
-          <td class="text-left">{{ member.age }}</td>
-          <td class="text-left">{{ member.address }}</td>
-          <td class="text-left">{{ member.birthDate }}</td>
+          <td class="text-left">{{ member.lastName }}</td>
+          <td class="text-left">{{ member.phone }}</td>
+          <td class="text-left">{{ member.dateOfBith }}</td>
         </tr>
       </tbody>
     </v-table>
@@ -26,66 +29,29 @@
 </template>
 
 <script>
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import { getMembers } from "@/services/members";
 export default {
   name: "MembersList",
   setup() {
-    const members = [
-      {
-        id: 1,
-        name: "Juan",
-        age: 20,
-        birthDate: "1990-01-01",
-        address: "Calle 1",
-      },
-      {
-        id: 2,
-        name: "Juan",
-        age: 20,
-        birthDate: "1990-01-01",
-        address: "Calle 1",
-      },
-      {
-        id: 3,
-        name: "Juan",
-        age: 20,
-        birthDate: "1990-01-01",
-        address: "Calle 1",
-      },
-      {
-        id: 4,
-        name: "Juan",
-        age: 20,
-        birthDate: "1990-01-01",
-        address: "Calle 1",
-      },
-      {
-        id: 5,
-        name: "Juan",
-        age: 20,
-        birthDate: "1990-01-01",
-        address: "Calle 1",
-      },
-      {
-        id: 6,
-        name: "Juan",
-        age: 20,
-        birthDate: "1990-01-01",
-        address: "Calle 1",
-      },
-      {
-        id: 7,
-        name: "Juan",
-        age: 20,
-        birthDate: "1990-01-01",
-        address: "Calle 1",
-      },
-    ];
+    onMounted(async () => {
+      console.log("MembersList component mounted");
+      members.value = await getMembers();
+      console.log("members.value: ", members.value);
+    });
+    const router = useRouter();
+    const members = ref([]);
     const getMemberDetail = (member) => {
       console.log(member);
+    };
+    const createNewMember = () => {
+      router.push("/members/new");
     };
     return {
       members,
       getMemberDetail,
+      createNewMember,
     };
   },
 };
