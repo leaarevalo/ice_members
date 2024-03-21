@@ -3,12 +3,14 @@ import HelloWord from "./components/HelloWorld.vue";
 import MemberList from "./components/members/MembersList.vue";
 import MemberDetail from "./components/members/MemberDetail.vue";
 import CreateMember from "./components/members/CreateMember.vue";
+import LoginMember from "./components/login/loginMember.vue"
 
 const Home = { template: "<div>Home</div>" };
 const About = { template: "<div>About</div>" };
 
 const routes = [
   { path: "/", component: Home },
+  {path:"/login", component: LoginMember},
   { path: "/about", component: About },
   { path: "/hello", component: HelloWord },
   { path: "/members", component: MemberList },
