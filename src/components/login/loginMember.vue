@@ -50,6 +50,7 @@
           size="large"
           variant="tonal"
           block
+          @click="login"
         >
           Log In
         </v-btn>
@@ -74,11 +75,4 @@
     const visible = ref(false)
   </script>
   
-  <script>
-    export default {
-      data: () => ({
-        visible: false,
-      }),
-    }
-  </script>
   
