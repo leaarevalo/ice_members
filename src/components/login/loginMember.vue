@@ -15,6 +15,7 @@
         <div class="text-subtitle-1 text-medium-emphasis">Account</div>
   
         <v-text-field
+          v-model="email"
           density="compact"
           placeholder="Email address"
           prepend-inner-icon="mdi-email-outline"
@@ -34,6 +35,7 @@
         </div>
   
         <v-text-field
+          v-model="password"
           :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
           :type="visible ? 'text' : 'password'"
           density="compact"
@@ -73,6 +75,21 @@
     import { ref } from 'vue'
   
     const visible = ref(false)
+
+  let email = ref('')
+  let password = ref('')
+
+  const login = () => {
+    console.log('Email:', email.value)
+    console.log('Password:', password.value)
+
+  }
   </script>
   
-  
+  <script>
+  export default {
+    data: () => ({
+      visible: false,
+    }),
+  }
+</script>
