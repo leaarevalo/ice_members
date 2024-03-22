@@ -52,7 +52,7 @@
           size="large"
           variant="tonal"
           block
-          @click="login"
+          @click="loginUser"
         >
           Log In
         </v-btn>
@@ -64,7 +64,7 @@
             rel="noopener noreferrer"
             target="_blank"
           >
-            Sign up now <v-icon icon="mdi-chevron-right"></v-icon>
+          Regístrate ahora <v-icon icon="mdi-chevron-right"></v-icon>
           </a>
         </v-card-text>
       </v-card>
@@ -73,22 +73,22 @@
   
   <script setup>
     import { ref } from 'vue'
+    import {login} from "../services/login.js"
+
     const visible = ref(false)
 
-  let email = ref('')
-  let password = ref('')
 
-  const login = () => {
-    console.log('Email:', email.value)
-    console.log('Password:', password.value)
+    let email = ref('')
+    let password = ref('')
 
-  }
+    const loginUser = async () => {
+      try{
+        const userData = await login(email.value, password.value)
+        console.log("Usuario autenticado", userData)
+      } catch(error){
+        console.error("Error durante el inicio de sesion", error)
+      }
+    }
+    
   </script>
   
-  <script>
-  export default {
-    data: () => ({
-      visible: false,
-    }),
-  }
-</script>
