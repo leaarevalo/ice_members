@@ -1,18 +1,12 @@
 import * as VueRouter from "vue-router";
-import HelloWord from "./components/HelloWorld.vue";
 import MemberList from "./components/members/MembersList.vue";
 import MemberDetail from "./components/members/MemberDetail.vue";
 import CreateMember from "./components/members/CreateMember.vue";
-import LoginMember from "./components/login/loginMember.vue"
+import LoginMember from "./components/loginMember.vue"
 
-const Home = { template: "<div>Home</div>" };
-const About = { template: "<div>About</div>" };
 
 const routes = [
-  { path: "/", component: Home },
-  {path:"/login", component: LoginMember},
-  { path: "/about", component: About },
-  { path: "/hello", component: HelloWord },
+  { path: "/", component: LoginMember },
   { path: "/members", component: MemberList },
   { path: "/members/new", component: CreateMember },
   { path: "/members/:id", component: MemberDetail },
