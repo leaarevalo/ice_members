@@ -14,7 +14,12 @@
     "pinia": "^2.1.7",
     "vue": "^3.2.13",
     "vue-router": "^4.2.4",
+<<<<<<< HEAD
     "vuetify": "^3.4.0"
+=======
+    "vue-sweetalert2": "^5.0.5",
+    "vuetify": "^3.3.13"
+>>>>>>> 2b6a65b (sweet alert)
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
