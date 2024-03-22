@@ -8,7 +8,7 @@ export async function login(email, password) {
     const response = await axios.post(url, {
       email: email,
       password: password
-    });
+    }); 
 
     if (response.status === 200) {
       return response.data;
