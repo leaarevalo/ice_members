@@ -17,13 +17,13 @@
         <v-text-field
           v-model="email"
           density="compact"
-          placeholder="Email address"
+          placeholder="Email"
           prepend-inner-icon="mdi-email-outline"
           variant="outlined"
         ></v-text-field>
   
         <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-          Password
+          password
   
           <a
             class="text-caption text-decoration-none text-blue"
@@ -73,7 +73,6 @@
   
   <script setup>
     import { ref } from 'vue'
-  
     const visible = ref(false)
 
   let email = ref('')
