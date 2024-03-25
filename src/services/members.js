@@ -1,8 +1,6 @@
 import axios from "axios";
 
-const url = "https://ice-members.onrender.com";
-
-console.log("proccess", process.env);
+const url = process.env.MEMBERS_URL;
 
 export async function getMembers() {
   const { data } = await axios.get(`${url}/members`);
@@ -17,4 +15,8 @@ export async function createNewMember(member) {
     phone: member.phone,
     dateOfBirth: member.dateOfBirth,
   });
+}
+
+export async function updateMember(member) {
+  axios.post(`${url}/members/update`, { member });
 }
