@@ -1,7 +1,6 @@
 import axios from "axios";
 
-//const url = process.env.MEMBERS_URL;
-const url = "http://localhost:3000";
+const url = process.env.MEMBERS_URL;
 
 export async function getMembers() {
   const { data } = await axios.get(`${url}/members`);
