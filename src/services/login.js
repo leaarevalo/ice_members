@@ -4,7 +4,7 @@ const url = "https://ice-members.onrender.com";
 
 export async function login(email, password) {
   try {
-    console.log("Servicio ejecutado")
+    console.log("Servicio ejecutado", email, password)
     const response = await axios.post(url, {
       email: email,
       password: password
