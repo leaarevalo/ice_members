@@ -13,7 +13,7 @@ const routes = [
   { path: "/hello", component: HelloWord },
   { path: "/members", component: MemberList },
   { path: "/members/new", component: CreateMember },
-  { path: "/members/:id", component: MemberDetail },
+  { path: "/members/detail", component: MemberDetail },
 ];
 
 const router = VueRouter.createRouter({
