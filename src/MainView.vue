@@ -13,7 +13,7 @@
           prepend-icon="mdi-forum"
           title="Members"
           value="Members"
-          href="members"
+          href="/members"
         >
         </v-list-item>
       </v-list>

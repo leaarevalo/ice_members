@@ -105,6 +105,7 @@
 
 <script>
 import { ref } from "vue";
+import { updateMember } from "@/services/members";
 import { useMemberStore } from "@/store/member";
 export default {
   name: "MemberDetail",
@@ -118,8 +119,9 @@ export default {
     const store = useMemberStore();
     const memberDetail = ref(store.getSelectedMember);
 
-    const saveMemberInformation = () => {
-      console.log("memberDetails", memberDetail.value);
+    const saveMemberInformation = async () => {
+      const response = await updateMember(memberDetail.value);
+      console.log(response);
     };
     const goBack = () => {
       store.setSelectedMember(null);
