@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const url = process.env.MEMBERS_URL;
+const url = process.env.VUE_APP_MEMBERS_URL;
+console.log("process", process.env);
 
 export async function getMembers() {
   const { data } = await axios.get(`${url}/members`);
@@ -18,5 +19,6 @@ export async function createNewMember(member) {
 }
 
 export async function updateMember(member) {
+  console.log("member", member);
   axios.post(`${url}/members/update`, { member });
 }
