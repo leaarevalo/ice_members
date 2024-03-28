@@ -2,11 +2,11 @@ import * as VueRouter from "vue-router";
 import MemberList from "./components/members/MembersList.vue";
 import MemberDetail from "./components/members/MemberDetail.vue";
 import CreateMember from "./components/members/CreateMember.vue";
-import LoginMember from "./components/loginMember.vue"
+import Login from "./components/Login.vue"
 
 
 const routes = [
-  { path: "/", component: LoginMember },
+  { path: "/", component: Login },
   { path: "/members", component: MemberList },
   { path: "/members/new", component: CreateMember },
   { path: "/members/detail", component: MemberDetail },
