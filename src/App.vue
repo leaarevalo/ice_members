@@ -1,14 +1,17 @@
 <template>
-  <MainView />
+  <!-- <MainView /> -->
+  <Login/>
 </template>
 
 <script>
-import MainView from "./MainView.vue";
+// import MainView from "./MainView.vue";
+import Login from "./components/Login.vue";
 
 export default {
   name: "App",
   components: {
-    MainView,
+    // // MainView,
+    Login
   },
 };
 </script>
