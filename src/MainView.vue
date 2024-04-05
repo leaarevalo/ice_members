@@ -6,7 +6,7 @@
           prepend-icon="mdi-view-dashboard"
           title="Home"
           value="home"
-          href="/"
+          href="/home"
         >
         </v-list-item>
         <v-list-item

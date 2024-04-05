@@ -14,5 +14,8 @@ export const useMemberStore = defineStore("member", {
     setSelectedMember(member) {
       this.selectedMember = member;
     },
+    setMembers(members){
+      this.members = members
+    }
   },
 });

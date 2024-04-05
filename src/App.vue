@@ -1,18 +1,25 @@
 <template>
+  <router-view></router-view>
+  <!-- <div id="app">
+    <router-view></router-view>
+  </div> -->
   <!-- <MainView /> -->
-  <Login/>
+  <!-- <Login/> -->
+  <!-- <Home/> -->
 </template>
 
 <script>
-// import MainView from "./MainView.vue";
+import MainView from "./MainView.vue";
 import Login from "./components/Login.vue";
+import Home from "./components/Home.vue"
 
 export default {
   name: "App",
-  components: {
-    // // MainView,
-    Login
-  },
+  // components: {
+  //   //MainView,
+  //   //Login,
+  //   //Home
+  // },
 };
 </script>
 
