@@ -1,6 +1,10 @@
 <template>
   <v-layout class="rounded rounded-md">
-    <v-navigation-drawer permanent class="bg-deep-purple">
+    <v-navigation-drawer
+      permanent
+      class="bg-deep-purple"
+      v-if="$route.path !== '/'"
+    >
       <v-list density="compact" nav>
         <v-list-item
           prepend-icon="mdi-view-dashboard"

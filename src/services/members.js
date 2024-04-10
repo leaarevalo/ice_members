@@ -1,11 +1,9 @@
 import axios from "axios";
 
 const url = process.env.VUE_APP_MEMBERS_URL;
-console.log("process", process.env);
 
 export async function getMembers() {
   const { data } = await axios.get(`${url}/members`);
-  console.log("data", data);
   return data;
 }
 
