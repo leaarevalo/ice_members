@@ -5,6 +5,7 @@ export const useMemberStore = defineStore("member", {
     return {
       membersOperations: [],
       selectedMember: {},
+      user: {},
     };
   },
   persist: {
@@ -18,6 +19,12 @@ export const useMemberStore = defineStore("member", {
       console.log("this.members", this.membersOperations);
       return this.membersOperations;
     },
+    getMembersCount() {
+      return this.membersOperations.length;
+    },
+    getUserType() {
+      return this.user.type;
+    },
   },
   actions: {
     setSelectedMember(member) {
@@ -26,5 +33,18 @@ export const useMemberStore = defineStore("member", {
     setMembers(members) {
       this.membersOperations = members;
     },
+    updateMember(member) {
+      const { name, _id } = member;
+      console.table({ name, _id });
+      console.log("member", member);
+      const index = this.membersOperations.findIndex((m) => m._id === member._id);
+      this.membersOperations.splice(index, 1, member);
+    },
+    setUser(user) {
+      this.user = user;
+    },
+    removeUser() {
+      this.user = {};
+    }
   },
 });

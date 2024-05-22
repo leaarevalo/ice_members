@@ -9,7 +9,7 @@
         v-model="searchValue"
       ></v-text-field>
     </v-responsive>
-    <v-btn @click="createNewMember">Create</v-btn>
+    <v-btn @click="createNewMember">Nuevo miembro</v-btn>
   </div>
   <div>
     <v-data-table
@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useMemberStore } from "@/store/member";
 export default {
@@ -37,10 +37,14 @@ export default {
     const router = useRouter();
     const members = ref([]);
     const setLocalMembers = () => {
-      const members = store.getMembersFromStore;
+      const members = store?.getMembersFromStore;
       members.value = members.membersOperations;
       return members;
     };
+
+    onMounted(() => {
+      members.value = setLocalMembers();
+    });
 
     watch(
       store,

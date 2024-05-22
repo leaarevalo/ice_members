@@ -38,7 +38,10 @@
           </v-col>
         </v-row>
       </v-container>
-      <v-btn @click="createMember">Guardar</v-btn>
+      <div class="button-footer">
+        <v-btn @click="goBack">Volver</v-btn>
+        <v-btn @click="createMember">Guardar</v-btn>
+      </div>
     </v-form>
   </v-sheet>
 </template>
@@ -60,10 +63,22 @@ export default {
       const newMember = { ...member.value };
       await createNewMember(newMember);
     };
+    const goBack = () => {
+      window.history.back();
+    };
     return {
       member,
       createMember,
+      goBack
     };
   },
 };
 </script>
+
+<style lang="scss">
+.button-footer {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+</style>

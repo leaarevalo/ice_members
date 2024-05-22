@@ -1,19 +1,26 @@
 import axios from "axios";
 
-const url = "https://ice-members.onrender.com";
+const url = "http://localhost:3000/login";
 
-export async function login(email, password) {
+export async function login(username, password) {
   try {
-    console.log("Servicio ejecutado", email, password)
-    const response = await axios.post(url, {
-      email: email,
+    console.log("Servicio ejecutado", username, password)
+    const { data } = await axios.post(url, {
+      username: username,
       password: password
     }); 
 
-    if (response.status === 200) {
-      return response.data;
+    console.log("Respuesta del servicio", data)
+
+    if (data.token) {
+      console.log("SET TOKEN");
+      localStorage.setItem('token', data.token);
+      return {
+        status: "ok",
+        user: data.user
+      };
     } else {
-      throw new Error('Error de inicio de sesión');
+      return {status: "error"};
     }
   } catch (error) {
     console.error('Error en la solicitud de inicio de sesión:', error);
