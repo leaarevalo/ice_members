@@ -9,7 +9,7 @@
         v-model="searchValue"
       ></v-text-field>
     </v-responsive>
-    <v-btn @click="createNewMember">Create</v-btn>
+    <v-btn @click="createNewMember">Nuevo miembro</v-btn>
   </div>
   <div>
     <v-data-table
@@ -25,22 +25,35 @@
 </template>
 
 <script>
-import { onMounted, ref, computed } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { getMembers } from "@/services/members";
 import { useMemberStore } from "@/store/member";
 export default {
   name: "MembersList",
   setup() {
-    onMounted(async () => {
-      console.log("MembersList component mounted");
-      members.value = await getMembers();
-      console.log("members.value: ", members.value);
-    });
-    const store = useMemberStore();
+    let store = useMemberStore();
+
     const searchValue = ref("");
     const router = useRouter();
     const members = ref([]);
+    const setLocalMembers = () => {
+      const members = store?.getMembersFromStore;
+      members.value = members.membersOperations;
+      return members;
+    };
+
+    onMounted(() => {
+      members.value = setLocalMembers();
+    });
+
+    watch(
+      store,
+      () => {
+        members.value = setLocalMembers();
+      },
+      { deep: true }
+    );
+
     const tableHeaders = [
       { text: "Nombre", value: "name" },
       { text: "Apellido", value: "lastName" },
@@ -49,6 +62,7 @@ export default {
     ];
 
     const membersList = computed(() => {
+      if (!members.value) return [];
       return searchValue.value
         ? members.value.filter((member) =>
             member.name.toLowerCase().includes(searchValue.value.toLowerCase())

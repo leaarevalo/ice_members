@@ -85,7 +85,7 @@
               dense
             ></v-text-field>
           </v-col>
-          <v-col cols="12" md="12">
+          <v-col cols="12" md="12" v-if="userTypeParsed === 'manager'">
             <v-textarea
               v-model="memberDetail.history"
               label="Historial de consejería"
@@ -107,6 +107,8 @@
 import { ref } from "vue";
 import { updateMember } from "@/services/members";
 import { useMemberStore } from "@/store/member";
+import { useRouter } from "vue-router";
+import { userTypes } from "@/utils/constants";
 export default {
   name: "MemberDetail",
   props: {
@@ -116,12 +118,16 @@ export default {
     },
   },
   setup() {
+    const router = useRouter();
     const store = useMemberStore();
     const memberDetail = ref(store.getSelectedMember);
-
+    const userType = ref(store.getUserType);
+    const userTypeParsed = userTypes[userType.value];
     const saveMemberInformation = async () => {
-      const response = await updateMember(memberDetail.value);
-      console.log(response);
+      // TODO agregar opcion en caso de que falle el update
+      await updateMember(memberDetail.value);
+      store.updateMember(memberDetail.value);
+      router.push("/members");
     };
     const goBack = () => {
       store.setSelectedMember(null);
@@ -129,6 +135,7 @@ export default {
     };
     return {
       memberDetail,
+      userTypeParsed,
       saveMemberInformation,
       goBack,
     };
