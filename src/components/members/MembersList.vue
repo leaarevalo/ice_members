@@ -65,7 +65,6 @@ export default {
       if (!members.value) return [];
       return searchValue.value
         ? members.value.filter((member) => {
-          console.log("member", member);
           return member.name.toLowerCase().includes(searchValue.value.toLowerCase())
     })
         : members.value;

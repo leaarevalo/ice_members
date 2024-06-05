@@ -111,11 +111,9 @@ export default {
     });
     const createMember = async () => {
       try {
-        console.log("member", member.value);
         const newMember = { ...member.value };
         const response = await createNewMember(newMember);
         store.addNewMember(response);
-        console.log("response", response);
         router.push("/members");
       } catch (err) {
         console.log("error", err);

@@ -64,9 +64,7 @@ const getUser = async () => {
   try {
     if (localStorage.getItem("member")) return;
     const members = await getMembers();
-    console.log(store);
     store.setMembers(members);
-    console.log("members: ", members);
   } catch (error) {
     console.log(error);
   }
@@ -75,7 +73,6 @@ const getUser = async () => {
 const LoginUser = async () => {
   try {
     const loginStatus = await login(email.value, password.value);
-    console.log(loginStatus);
     if (loginStatus.status === "ok") {
       store.setUser(loginStatus.user);
       getUser();
