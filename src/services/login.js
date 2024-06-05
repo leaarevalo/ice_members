@@ -4,16 +4,13 @@ const url = "http://localhost:3000/login";
 
 export async function login(username, password) {
   try {
-    console.log("Servicio ejecutado", username, password)
     const { data } = await axios.post(url, {
       username: username,
       password: password
     }); 
 
-    console.log("Respuesta del servicio", data)
 
     if (data.token) {
-      console.log("SET TOKEN");
       localStorage.setItem('token', data.token);
       return {
         status: "ok",

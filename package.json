@@ -2,21 +2,26 @@
   "name": "ice",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://<leaarevalo>.github.io/<ice_members>",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
+    "@date-io/luxon": "^3.0.0",
     "@mdi/font": "^7.4.47",
     "@vueuse/core": "^10.9.0",
     "axios": "^1.6.8",
     "core-js": "^3.8.3",
+    "luxon": "^3.4.4",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
     "vue": "^3.2.13",
     "vue-router": "^4.2.4",
-    "vuetify": "^3.4.0"
+    "vuetify": "^3.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
@@ -26,6 +31,7 @@
     "@vue/cli-service": "~5.0.0",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
+    "gh-pages": "^6.1.1",
     "material-design-icons-iconfont": "^6.7.0",
     "node-sass": "^9.0.0",
     "sass-loader": "^14.1.1"
