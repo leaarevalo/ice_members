@@ -62,7 +62,7 @@ const passwordErrors = ref("");
 
 const getUser = async () => {
   try {
-    if (store.getMembersFromStore.length > 0) return;
+    if (localStorage.getItem("member")) return;
     const members = await getMembers();
     console.log(store);
     store.setMembers(members);

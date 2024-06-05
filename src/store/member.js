@@ -33,6 +33,11 @@ export const useMemberStore = defineStore("member", {
     setMembers(members) {
       this.membersOperations = members;
     },
+    addNewMember(member) {
+      if(member) {
+        this.membersOperations.push(member);
+      }
+    },
     updateMember(member) {
       const { name, _id } = member;
       console.table({ name, _id });

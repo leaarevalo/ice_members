@@ -2,7 +2,7 @@
   <div class="member-list_header">
     <v-responsive max-width="350px">
       <v-text-field
-        label="Buscar"
+        label="Buscar por nombre"
         outlined
         dense
         prepend-inner-icon="mdi-magnify"
@@ -16,7 +16,7 @@
       :items="membersList"
       items-per-page="25"
       item-value="name"
-      height="500"
+      height="524"
       :headers="tableHeaders"
       @click:row="getMemberDetail"
     >
@@ -64,9 +64,10 @@ export default {
     const membersList = computed(() => {
       if (!members.value) return [];
       return searchValue.value
-        ? members.value.filter((member) =>
-            member.name.toLowerCase().includes(searchValue.value.toLowerCase())
-          )
+        ? members.value.filter((member) => {
+          console.log("member", member);
+          return member.name.toLowerCase().includes(searchValue.value.toLowerCase())
+    })
         : members.value;
     });
 

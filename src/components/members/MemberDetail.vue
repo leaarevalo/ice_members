@@ -8,16 +8,14 @@
             <v-text-field
               v-model="memberDetail.name"
               label="Nombre"
-              outlined
-              dense
+              variant="outlined"
             ></v-text-field>
           </v-col>
           <v-col cols="6" md="6">
             <v-text-field
               v-model="memberDetail.lastName"
               label="Apellido"
-              outlined
-              dense
+              variant="outlined"
             >
             </v-text-field>
           </v-col>
@@ -27,16 +25,14 @@
             <v-text-field
               v-model="memberDetail.phone"
               label="Telefono"
-              outlined
-              dense
+              variant="outlined"
             ></v-text-field>
           </v-col>
           <v-col cols="6" md="6">
             <v-text-field
               v-model="memberDetail.email"
               label="Email"
-              outlined
-              dense
+              variant="outlined"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -45,16 +41,14 @@
             <v-text-field
               v-model="memberDetail.civilState"
               label="Estado civil"
-              outlined
-              dense
+              variant="outlined"
             ></v-text-field>
           </v-col>
           <v-col cols="6" md="6">
             <v-text-field
               v-model="memberDetail.marriageDate"
               label="Fecha de matrimonio"
-              outlined
-              dense
+              variant="outlined"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -63,34 +57,40 @@
             <v-text-field
               v-model="memberDetail.belongToCelula"
               label="Celula a la que pertenece"
-              outlined
-              dense
+              variant="outlined"
             ></v-text-field>
           </v-col>
           <v-col cols="6" md="6">
             <v-text-field
               v-model="memberDetail.belongToGroup"
               label="Grupo al que pertenece"
-              outlined
-              dense
+              variant="outlined"
             ></v-text-field>
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="12" md="12">
+          <v-col cols="6" md="6">
+            <v-text-field
+              v-model="memberDetail.dateOfBirth"
+              label="Fecha de nacimiento"
+              placeholder=""
+              variant="outlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="6" md="6">
             <v-text-field
               v-model="memberDetail.address"
               label="Address"
-              outlined
-              dense
+              variant="outlined"
             ></v-text-field>
           </v-col>
+        </v-row>
+        <v-row>
           <v-col cols="12" md="12" v-if="userTypeParsed === 'manager'">
             <v-textarea
               v-model="memberDetail.history"
               label="Historial de consejería"
-              outlined
-              dense
+              variant="outlined"
             ></v-textarea>
           </v-col>
         </v-row>
