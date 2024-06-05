@@ -16,7 +16,6 @@ export const useMemberStore = defineStore("member", {
       return this.selectedMember;
     },
     getMembersFromStore() {
-      console.log("this.members", this.membersOperations);
       return this.membersOperations;
     },
     getMembersCount() {
@@ -33,10 +32,14 @@ export const useMemberStore = defineStore("member", {
     setMembers(members) {
       this.membersOperations = members;
     },
+    addNewMember(member) {
+      if(member) {
+        this.membersOperations.push(member);
+      }
+    },
     updateMember(member) {
       const { name, _id } = member;
       console.table({ name, _id });
-      console.log("member", member);
       const index = this.membersOperations.findIndex((m) => m._id === member._id);
       this.membersOperations.splice(index, 1, member);
     },

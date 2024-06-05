@@ -1,39 +1,86 @@
 <template>
   <v-sheet>
-    <h1>Member Detail</h1>
+    <h1>Registrar miembro</h1>
     <v-form ref="form">
       <v-container>
         <v-row>
-          <v-col cols="12" md="12">
+          <v-col cols="6" md="6">
             <v-text-field
               v-model="member.name"
               label="Nombre"
-              outlined
-              dense
+              variant="outlined"
             ></v-text-field>
           </v-col>
-          <v-col cols="12" md="12">
+          <v-col cols="6" md="6">
             <v-text-field
               v-model="member.lastName"
               label="Apellido"
-              outlined
-              dense
+              variant="outlined"
             ></v-text-field>
           </v-col>
-          <v-col cols="12" md="12">
-            <v-text-field
-              v-model="member.dateOfBirth"
-              label="Fecha de nacimiento"
-              outlined
-              dense
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" md="12">
+        </v-row>
+        <v-row>
+          <v-col cols="6" md="6">
             <v-text-field
               v-model="member.phone"
               label="Telefono"
-              outlined
-              dense
+              variant="outlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="6" md="6">
+            <v-text-field
+              v-model="member.email"
+              label="Email"
+              variant="outlined"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="6" md="6">
+            <v-text-field
+              v-model="member.civilState"
+              label="Estado civil"
+              variant="outlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="6" md="6">
+            <v-text-field
+              v-model="member.marriageDate"
+              label="Fecha de casamiento"
+              variant="outlined"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="6" md="6">
+            <v-text-field
+              v-model="member.belongToCelula"
+              label="Celula a la que pertenece"
+              variant="outlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="6" md="6">
+            <v-text-field
+              v-model="member.belongToGroup"
+              label="Grupo al que pertenece"
+              variant="outlined"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="6" md="6">
+            <v-text-field
+              v-model="member.address"
+              label="Direccion"
+              variant="outlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="6" md="6">
+            <v-text-field
+              v-model="member.dateOfBirth"
+              label="Fecha de nacimiento"
+              placeholder="dd/mm/aaaa"
+              variant="outlined"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -49,9 +96,13 @@
 <script>
 import { ref } from "vue";
 import { createNewMember } from "@/services/members";
+import { useMemberStore } from "@/store/member";
+import { useRouter } from "vue-router";
 export default {
   name: "MemberDetail",
   setup() {
+    const router = useRouter();
+    const store = useMemberStore();
     const member = ref({
       name: "",
       lastName: "",
@@ -59,9 +110,14 @@ export default {
       phone: "",
     });
     const createMember = async () => {
-      console.log("member", member.value);
-      const newMember = { ...member.value };
-      await createNewMember(newMember);
+      try {
+        const newMember = { ...member.value };
+        const response = await createNewMember(newMember);
+        store.addNewMember(response);
+        router.push("/members");
+      } catch (err) {
+        console.log("error", err);
+      }
     };
     const goBack = () => {
       window.history.back();
@@ -69,7 +125,7 @@ export default {
     return {
       member,
       createMember,
-      goBack
+      goBack,
     };
   },
 };
