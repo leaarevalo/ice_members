@@ -2,7 +2,7 @@
   "name": "ice",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://<username>.github.io/<repository>",
+  "homepage": "https://<leaarevalo>.github.io/<ice_members>",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
