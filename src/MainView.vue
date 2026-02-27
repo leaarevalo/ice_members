@@ -50,16 +50,72 @@
               <span class="sidebar-user-role">{{ userRole }}</span>
             </div>
           </div>
-          <v-btn
-            icon="mdi-logout"
-            variant="text"
-            size="small"
-            class="sidebar-logout-btn"
-            @click="logout"
-          ></v-btn>
+          <div class="sidebar-actions">
+            <v-btn
+              icon="mdi-lock-reset"
+              variant="text"
+              size="small"
+              class="sidebar-action-btn"
+              @click="showPasswordDialog = true"
+              title="Cambiar contraseña"
+            ></v-btn>
+            <v-btn
+              icon="mdi-logout"
+              variant="text"
+              size="small"
+              class="sidebar-action-btn sidebar-logout-btn"
+              @click="logout"
+              title="Cerrar sesión"
+            ></v-btn>
+          </div>
         </div>
       </template>
     </v-navigation-drawer>
+
+    <!-- Password Change Dialog -->
+    <v-dialog v-model="showPasswordDialog" max-width="420">
+      <v-card rounded="xl">
+        <v-card-title class="password-dialog-title">
+          <v-icon class="mr-2" color="primary">mdi-lock-reset</v-icon>
+          Cambiar contraseña
+        </v-card-title>
+        <v-card-text>
+          <v-text-field
+            v-model="newPassword"
+            label="Nueva contraseña"
+            :type="showPassword ? 'text' : 'password'"
+            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+            @click:append-inner="showPassword = !showPassword"
+            prepend-inner-icon="mdi-lock-outline"
+            :rules="[v => !!v || 'Requerido', v => (v && v.length >= 6) || 'Mínimo 6 caracteres']"
+            counter
+          ></v-text-field>
+          <v-text-field
+            v-model="confirmPassword"
+            label="Confirmar contraseña"
+            :type="showPassword ? 'text' : 'password'"
+            prepend-inner-icon="mdi-lock-check-outline"
+            :rules="[v => !!v || 'Requerido', v => v === newPassword || 'Las contraseñas no coinciden']"
+          ></v-text-field>
+        </v-card-text>
+        <v-card-actions class="password-dialog-actions">
+          <v-btn variant="outlined" color="secondary" @click="closePasswordDialog">Cancelar</v-btn>
+          <v-btn
+            color="primary"
+            :loading="savingPassword"
+            :disabled="!newPassword || newPassword.length < 6 || newPassword !== confirmPassword"
+            @click="changePassword"
+          >
+            Guardar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Snackbar -->
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" timeout="3000">
+      {{ snackbar.text }}
+    </v-snackbar>
 
     <!-- Main Content -->
     <v-main class="main-content">
@@ -72,14 +128,22 @@
 
 <script>
 import { useMemberStore } from "@/store/member";
+import { updatePassword } from "@/services/login";
 import { useRouter } from "vue-router";
-import { onMounted, computed } from "vue";
+import { onMounted, computed, ref, reactive } from "vue";
 
 export default {
   name: "MainView",
   setup() {
     const store = useMemberStore();
     const router = useRouter();
+
+    const showPasswordDialog = ref(false);
+    const newPassword = ref("");
+    const confirmPassword = ref("");
+    const showPassword = ref(false);
+    const savingPassword = ref(false);
+    const snackbar = reactive({ show: false, text: "", color: "" });
 
     const navItems = computed(() => {
       const items = [
@@ -113,6 +177,33 @@ export default {
       return "Miembro";
     });
 
+    const closePasswordDialog = () => {
+      showPasswordDialog.value = false;
+      newPassword.value = "";
+      confirmPassword.value = "";
+      showPassword.value = false;
+    };
+
+    const changePassword = async () => {
+      try {
+        savingPassword.value = true;
+        const stored = JSON.parse(localStorage.getItem("member"));
+        const managerId = stored?.user?.id || stored?.id;
+        await updatePassword(managerId, newPassword.value);
+        snackbar.text = "Contraseña actualizada correctamente";
+        snackbar.color = "success";
+        snackbar.show = true;
+        closePasswordDialog();
+      } catch (error) {
+        console.error("Error updating password:", error);
+        snackbar.text = "Error al actualizar la contraseña";
+        snackbar.color = "error";
+        snackbar.show = true;
+      } finally {
+        savingPassword.value = false;
+      }
+    };
+
     const logout = () => {
       localStorage.removeItem("access_token");
       localStorage.removeItem("member");
@@ -120,7 +211,11 @@ export default {
       router.replace("/");
     };
 
-    return { logout, navItems, userName, userInitials, userRole };
+    return {
+      logout, navItems, userName, userInitials, userRole,
+      showPasswordDialog, newPassword, confirmPassword, showPassword,
+      savingPassword, snackbar, closePasswordDialog, changePassword,
+    };
   },
 };
 </script>
@@ -223,16 +318,26 @@ export default {
   color: #8A857E;
 }
 
-.sidebar-logout-btn {
-  color: #8A857E !important;
+.sidebar-actions {
+  display: flex;
+  gap: 4px;
   position: absolute;
-  right: 16px;
-  bottom: 22px;
+  right: 12px;
+  bottom: 20px;
+}
+
+.sidebar-action-btn {
+  color: #8A857E !important;
 
   &:hover {
-    color: #DC2626 !important;
-    background-color: rgba(220, 38, 38, 0.1) !important;
+    color: #E8E5DE !important;
+    background-color: #3D3C38 !important;
   }
+}
+
+.sidebar-logout-btn:hover {
+  color: #DC2626 !important;
+  background-color: rgba(220, 38, 38, 0.1) !important;
 }
 
 /* Main Content */
@@ -243,5 +348,26 @@ export default {
 .main-container {
   max-width: 1200px;
   padding: 32px 40px;
+}
+
+/* Password Dialog */
+.password-dialog-title {
+  display: flex;
+  align-items: center;
+  padding: 20px 24px 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.password-dialog-actions {
+  padding: 8px 24px 20px;
+  justify-content: flex-end;
+  gap: 8px;
+
+  .v-btn {
+    text-transform: none;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
 }
 </style>

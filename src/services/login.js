@@ -7,7 +7,7 @@ export async function login(username, password) {
     const { data } = await axios.post(url, {
       username: username,
       password: password
-    }); 
+    });
 
 
     if (data.access_token) {
@@ -17,7 +17,7 @@ export async function login(username, password) {
         user: data.user
       };
     } else {
-      return {status: "error"};
+      return { status: "error" };
     }
   } catch (error) {
     console.error('Error en la solicitud de inicio de sesión:', error);
@@ -38,3 +38,14 @@ export function logout() {
   localStorage.removeItem('access_token');
 }
 
+export async function updatePassword(managerId, password) {
+  const token = localStorage.getItem('access_token');
+  const { data } = await axios.put(`http://localhost:3000/auth/managers/${managerId}`, {
+    password,
+  }, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return data;
+}
