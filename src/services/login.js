@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const url = "http://localhost:3000/auth/login";
+const url = process.env.VUE_APP_MEMBERS_URL;
 
 export async function login(username, password) {
   try {
-    const { data } = await axios.post(url, {
+    const { data } = await axios.post(`${url}/auth/login`, {
       username: username,
       password: password
     });
@@ -40,7 +40,7 @@ export function logout() {
 
 export async function updatePassword(managerId, password) {
   const token = localStorage.getItem('access_token');
-  const { data } = await axios.put(`http://localhost:3000/auth/managers/${managerId}`, {
+  const { data } = await axios.put(`${url}/auth/managers/${managerId}`, {
     password,
   }, {
     headers: {
