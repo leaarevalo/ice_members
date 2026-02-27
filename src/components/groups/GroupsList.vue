@@ -1,18 +1,18 @@
 <template>
-  <div class="members-page">
+  <div class="groups-page">
     <!-- Page Header -->
     <div class="page-header">
       <div>
-        <h1 class="page-title">Miembros</h1>
-        <p class="page-subtitle">Gestión de miembros de la iglesia</p>
+        <h1 class="page-title">Grupos</h1>
+        <p class="page-subtitle">Gestión de grupos de la iglesia</p>
       </div>
       <v-btn
         color="primary"
         prepend-icon="mdi-plus"
-        class="new-member-btn"
-        @click="createNewMember"
+        class="new-group-btn"
+        @click="createNewGroup"
       >
-        Nuevo miembro
+        Nuevo grupo
       </v-btn>
     </div>
 
@@ -31,20 +31,35 @@
 
       <!-- Data Table -->
       <v-data-table
-        :items="membersList"
+        :items="groupsList"
         :loading="loading"
         items-per-page="25"
         item-value="name"
         :headers="tableHeaders"
-        @click:row="getMemberDetail"
-        class="members-table"
+        @click:row="getGroupDetail"
+        class="groups-table"
         hover
       >
-        <template #item.dateOfBirth="{ item }">
-          {{ formatDate(item.dateOfBirth) }}
-        </template>
-        <template #item.dateOfConversion="{ item }">
-          {{ formatDate(item.dateOfConversion) }}
+        <template #item.managers="{ item }">
+          <div class="managers-chips">
+            <v-chip
+              v-for="manager in (item.managers || []).slice(0, 3)"
+              :key="manager._id"
+              size="small"
+              color="primary"
+              variant="tonal"
+              class="mr-1"
+            >
+              {{ manager.name }} {{ manager.lastName }}
+            </v-chip>
+            <v-chip
+              v-if="(item.managers || []).length > 3"
+              size="small"
+              variant="outlined"
+            >
+              +{{ item.managers.length - 3 }}
+            </v-chip>
+          </div>
         </template>
       </v-data-table>
     </v-card>
@@ -54,83 +69,77 @@
 <script>
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useMemberStore } from "@/store/member";
-import { getMembers } from "@/services/members";
-export default {
-  name: "MembersList",
-  setup() {
-    let store = useMemberStore();
+import { useGroupStore } from "@/store/group";
+import { getGroups } from "@/services/groups";
 
+export default {
+  name: "GroupsList",
+  setup() {
+    const store = useGroupStore();
     const searchValue = ref("");
     const router = useRouter();
-    const members = ref([]);
+    const groups = ref([]);
     const loading = ref(false);
 
-    const fetchMembers = async () => {
+    const fetchGroups = async () => {
       try {
         loading.value = true;
-        const membersData = await getMembers();
-        members.value = membersData;
-        store.setMembers(membersData);
+        const groupsData = await getGroups();
+        groups.value = groupsData;
+        store.setGroups(groupsData);
       } catch (error) {
-        console.error('Error fetching members:', error);
+        console.error("Error fetching groups:", error);
       } finally {
         loading.value = false;
       }
     };
 
     onMounted(() => {
-      fetchMembers();
+      fetchGroups();
     });
 
     const tableHeaders = [
-      { text: "Documento", value: "document" },
       { text: "Nombre", value: "name" },
-      { text: "Email", value: "email" },
-      { text: "Fecha de nacimiento", value: "dateOfBirth" },
-      { text: "Fecha de conversión", value: "dateOfConversion" },
+      { text: "Descripción", value: "description" },
+      { text: "Managers", value: "managers" },
     ];
 
-    const membersList = computed(() => {
-      if (!members.value) return [];
+    const groupsList = computed(() => {
+      if (!groups.value) return [];
       return searchValue.value
-        ? members.value.filter((member) => {
-          return member.name.toLowerCase().includes(searchValue.value.toLowerCase())
-    })
-        : members.value;
+        ? groups.value.filter((group) => {
+            return group.name
+              .toLowerCase()
+              .includes(searchValue.value.toLowerCase());
+          })
+        : groups.value;
     });
 
-    const getMemberDetail = (_, row) => {
-      const member = row.item;
-      store.setSelectedMember(member);
-      router.push(`/members/detail`);
-    };
-    const createNewMember = () => {
-      router.push("/members/new");
+    const getGroupDetail = (_, row) => {
+      const group = row.item;
+      store.setSelectedGroup(group);
+      router.push("/groups/detail");
     };
 
-    const formatDate = (dateString) => {
-      if (!dateString) return '';
-      const date = new Date(dateString);
-      return date.toLocaleDateString('es-ES');
+    const createNewGroup = () => {
+      router.push("/groups/new");
     };
 
     return {
-      members,
+      groups,
       searchValue,
-      membersList,
+      groupsList,
       tableHeaders,
-      getMemberDetail,
-      createNewMember,
+      getGroupDetail,
+      createNewGroup,
       loading,
-      formatDate,
     };
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.members-page {
+.groups-page {
   max-width: 1100px;
 }
 
@@ -155,7 +164,7 @@ export default {
   margin: 0;
 }
 
-.new-member-btn {
+.new-group-btn {
   text-transform: none;
   font-weight: 600;
   letter-spacing: 0;
@@ -175,20 +184,27 @@ export default {
   max-width: 380px;
 }
 
-.members-table {
+.groups-table {
   border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.members-table :deep(tr) {
+.groups-table :deep(tr) {
   cursor: pointer;
 }
 
-.members-table :deep(th) {
+.groups-table :deep(th) {
   background-color: #F5F3EF !important;
   font-weight: 600 !important;
   color: #6B6560 !important;
   font-size: 0.8rem !important;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+}
+
+.managers-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 0;
 }
 </style>
