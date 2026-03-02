@@ -16,7 +16,7 @@
               <v-text-field
                 v-model="memberDetail.document"
                 label="Documento (DNI/CI)"
-                required
+                :rules="[v => !!v || 'El documento es obligatorio']"
                 prepend-inner-icon="mdi-card-account-details-outline"
               ></v-text-field>
             </v-col>
@@ -28,6 +28,7 @@
               <v-text-field
                 v-model="memberDetail.name"
                 label="Nombre"
+                :rules="[v => !!v || 'El nombre es obligatorio']"
                 prepend-inner-icon="mdi-account-outline"
               ></v-text-field>
             </v-col>
@@ -35,6 +36,7 @@
               <v-text-field
                 v-model="memberDetail.lastName"
                 label="Apellido"
+                :rules="[v => !!v || 'El apellido es obligatorio']"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -124,6 +126,56 @@
             </v-col>
           </v-row>
 
+          <!-- Estudios y Ocupación -->
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="memberDetail.studyStatus"
+                label="Nivel de estudios"
+                prepend-inner-icon="mdi-school-outline"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="memberDetail.ocupation"
+                label="Ocupación"
+                prepend-inner-icon="mdi-briefcase-outline"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+
+          <!-- Obra social y Cantidad de hijos -->
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-switch
+                v-model="memberDetail.hasSocialWork"
+                label="Tiene obra social"
+                color="primary"
+                hide-details
+              ></v-switch>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model.number="memberDetail.numberOfChilds"
+                label="Cantidad de hijos"
+                type="number"
+                min="0"
+                prepend-inner-icon="mdi-human-male-child"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+
+          <!-- Tutor -->
+          <v-row>
+            <v-col cols="12">
+              <v-text-field
+                v-model="memberDetail.tutorInfo"
+                label="Información del tutor"
+                prepend-inner-icon="mdi-account-supervisor-outline"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+
         </v-container>
 
         <!-- Action Buttons -->
@@ -161,8 +213,11 @@ export default {
     // Initialize user from store first
     store.initializeUser();
     const isManager = computed(() => store.isManager);
+    const form = ref(null);
 
     const saveMemberInformation = async () => {
+      const { valid } = await form.value.validate();
+      if (!valid) return;
       await updateMember(memberDetail.value);
       store.updateMember(memberDetail.value);
       router.push("/members");
@@ -176,6 +231,7 @@ export default {
       isManager,
       saveMemberInformation,
       goBack,
+      form,
     };
   },
 };

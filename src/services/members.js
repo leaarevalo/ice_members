@@ -28,6 +28,11 @@ export async function createNewMember(member) {
     marriageDate: member.marriageDate,
     belongToCelula: member.belongToCelula,
     belongToGroup: member.belongToGroup,
+    studyStatus: member.studyStatus,
+    ocupation: member.ocupation,
+    hasSocialWork: member.hasSocialWork,
+    numberOfChilds: member.numberOfChilds,
+    tutorInfo: member.tutorInfo,
   }, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -52,6 +57,11 @@ export async function updateMember(member) {
     marriageDate: member.marriageDate,
     belongToCelula: member.belongToCelula,
     belongToGroup: member.belongToGroup,
+    studyStatus: member.studyStatus,
+    ocupation: member.ocupation,
+    hasSocialWork: member.hasSocialWork,
+    numberOfChilds: member.numberOfChilds,
+    tutorInfo: member.tutorInfo,
   }, {
     headers: {
       Authorization: `Bearer ${token}`,

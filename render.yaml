@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: ice-members
+    runtime: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VUE_APP_MEMBERS_URL
+        sync: false

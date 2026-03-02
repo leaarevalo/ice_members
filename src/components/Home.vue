@@ -5,7 +5,7 @@
       <h1 class="welcome-title">
         Bienvenido, <span class="welcome-name">{{ userName }}</span>
       </h1>
-      <p class="welcome-subtitle">Iglesia de Cristo — Panel de administración</p>
+      <p class="welcome-subtitle">IDC Centro — Panel de administración</p>
     </div>
 
     <!-- Stats Cards -->
