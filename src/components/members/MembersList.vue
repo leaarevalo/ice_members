@@ -80,7 +80,12 @@ export default {
     };
 
     onMounted(() => {
-      fetchMembers();
+      const storeMembers = store.getMembersFromStore;
+      if (storeMembers && storeMembers.length > 0) {
+        members.value = storeMembers;
+      } else {
+        fetchMembers();
+      }
     });
 
     const tableHeaders = [

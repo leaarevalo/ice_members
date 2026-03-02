@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { onMounted, computed, ref } from "vue";
+import { onMounted, computed } from "vue";
 import { useMemberStore } from "@/store/member";
 import { useGroupStore } from "@/store/group";
 import { getMembers } from "@/services/members";
@@ -48,25 +48,24 @@ export default {
   setup() {
     const memberStore = useMemberStore();
     const groupStore = useGroupStore();
-    const membersCount = ref(0);
-    const groupsCount = ref(0);
 
     onMounted(async () => {
       try {
         const members = await getMembers();
         memberStore.setMembers(members);
-        membersCount.value = members.length;
       } catch (e) {
-        membersCount.value = memberStore.getMembersCount;
+        console.error("Error fetching members:", e);
       }
       try {
         const groups = await getGroups();
         groupStore.setGroups(groups);
-        groupsCount.value = groups.length;
       } catch (e) {
-        groupsCount.value = groupStore.getGroupsCount;
+        console.error("Error fetching groups:", e);
       }
     });
+
+    const membersCount = computed(() => memberStore.getMembersCount);
+    const groupsCount = computed(() => groupStore.getGroupsCount);
 
     const userName = computed(() => {
       const user = memberStore.getUser;

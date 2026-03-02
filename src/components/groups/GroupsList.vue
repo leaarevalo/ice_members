@@ -95,7 +95,12 @@ export default {
     };
 
     onMounted(() => {
-      fetchGroups();
+      const storeGroups = store.getGroupsFromStore;
+      if (storeGroups && storeGroups.length > 0) {
+        groups.value = storeGroups;
+      } else {
+        fetchGroups();
+      }
     });
 
     const tableHeaders = [
