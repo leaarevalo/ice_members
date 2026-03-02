@@ -8,7 +8,7 @@
           max-width="64"
           src="https://iglesiadecristotuc.org.ar/media/imagen/top_bar/logo.png"
         ></v-img>
-        <h1 class="login-title">ICE Members</h1>
+        <h1 class="login-title">IDC Centro</h1>
         <p class="login-subtitle">Ingresá con tu cuenta para continuar</p>
       </div>
 

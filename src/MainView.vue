@@ -14,7 +14,7 @@
           max-width="48"
           class="sidebar-logo-img"
         ></v-img>
-        <span class="sidebar-logo-text">ICE Members</span>
+        <span class="sidebar-logo-text">IDC Centro</span>
       </div>
 
       <v-divider class="sidebar-divider"></v-divider>
