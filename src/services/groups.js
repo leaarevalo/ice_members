@@ -18,6 +18,7 @@ export async function createGroup(group) {
         name: group.name,
         description: group.description,
         managers: group.managers,
+        collaborators: group.collaborators,
     }, {
         headers: {
             Authorization: `Bearer ${token}`,
@@ -32,6 +33,7 @@ export async function updateGroup(group) {
         name: group.name,
         description: group.description,
         managers: group.managers,
+        collaborators: group.collaborators,
     }, {
         headers: {
             Authorization: `Bearer ${token}`,

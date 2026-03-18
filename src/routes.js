@@ -6,6 +6,9 @@ import GroupsList from "./components/groups/GroupsList.vue";
 import CreateGroup from "./components/groups/CreateGroup.vue";
 import GroupDetail from "./components/groups/GroupDetail.vue";
 import CounselingView from "./components/counseling/CounselingView.vue";
+import ManagersList from "./components/managers/ManagersList.vue";
+import SmallGroupsView from "./components/small-groups/SmallGroupsView.vue";
+import SmallGroupDetail from "./components/small-groups/SmallGroupDetail.vue";
 import Login from "./components/Login.vue"
 import Home from "./components/Home.vue"
 import { isAuthenticated } from "./services/login.js";
@@ -21,6 +24,9 @@ const routes = [
   { path: "/groups/new", component: CreateGroup, meta: { requiresAuth: true } },
   { path: "/groups/detail", component: GroupDetail, meta: { requiresAuth: true } },
   { path: "/counseling", component: CounselingView, meta: { requiresAuth: true } },
+  { path: "/managers", component: ManagersList, meta: { requiresAuth: true } },
+  { path: "/small-groups", component: SmallGroupsView, meta: { requiresAuth: true } },
+  { path: "/small-groups/detail", component: SmallGroupDetail, meta: { requiresAuth: true } },
 ];
 
 const router = VueRouter.createRouter({

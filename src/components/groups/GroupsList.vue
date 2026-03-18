@@ -7,6 +7,7 @@
         <p class="page-subtitle">Gestión de grupos de la iglesia</p>
       </div>
       <v-btn
+        v-if="isManager"
         color="primary"
         prepend-icon="mdi-plus"
         class="new-group-btn"
@@ -43,14 +44,14 @@
         <template #item.managers="{ item }">
           <div class="managers-chips">
             <v-chip
-              v-for="manager in (item.managers || []).slice(0, 3)"
-              :key="manager._id"
+              v-for="(manager, index) in (item.managers || []).slice(0, 3)"
+              :key="index"
               size="small"
               color="primary"
               variant="tonal"
               class="mr-1"
             >
-              {{ manager.name }} {{ manager.lastName }}
+              {{ getManagerName(manager) }}
             </v-chip>
             <v-chip
               v-if="(item.managers || []).length > 3"
@@ -58,6 +59,28 @@
               variant="outlined"
             >
               +{{ item.managers.length - 3 }}
+            </v-chip>
+          </div>
+        </template>
+
+        <template #item.collaborators="{ item }">
+          <div class="managers-chips">
+            <v-chip
+              v-for="(colab, index) in (item.collaborators || []).slice(0, 3)"
+              :key="'colab-'+index"
+              size="small"
+              color="secondary"
+              variant="tonal"
+              class="mr-1"
+            >
+              {{ getManagerName(colab) }}
+            </v-chip>
+            <v-chip
+              v-if="(item.collaborators || []).length > 3"
+              size="small"
+              variant="outlined"
+            >
+              +{{ item.collaborators.length - 3 }}
             </v-chip>
           </div>
         </template>
@@ -70,16 +93,22 @@
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useGroupStore } from "@/store/group";
+import { useMemberStore } from "@/store/member";
 import { getGroups } from "@/services/groups";
+import { getMembers } from "@/services/members";
 
 export default {
   name: "GroupsList",
   setup() {
     const store = useGroupStore();
+    const memberStore = useMemberStore();
     const searchValue = ref("");
     const router = useRouter();
     const groups = ref([]);
+    const members = ref([]);
     const loading = ref(false);
+
+    const isManager = computed(() => memberStore.isManager);
 
     const fetchGroups = async () => {
       try {
@@ -94,7 +123,24 @@ export default {
       }
     };
 
+    const fetchMembers = async () => {
+      try {
+        const storeMembers = memberStore.getMembersFromStore;
+        if (storeMembers && storeMembers.length > 0) {
+          members.value = storeMembers;
+        } else {
+          const mems = await getMembers();
+          members.value = mems;
+          memberStore.setMembers(mems);
+        }
+      } catch (err) {
+        console.error("Error fetching members:", err);
+      }
+    };
+
     onMounted(() => {
+      fetchMembers();
+      
       const storeGroups = store.getGroupsFromStore;
       if (storeGroups && storeGroups.length > 0) {
         groups.value = storeGroups;
@@ -103,10 +149,33 @@ export default {
       }
     });
 
+    const getManagerName = (manager) => {
+      // Extract the DNI from the manager data
+      let dni = manager;
+      if (typeof manager === 'object' && manager !== null) {
+        // If it already has name and lastName populated
+        if (manager.name || manager.lastName) {
+          return `${manager.name || ''} ${manager.lastName || ''}`.trim();
+        }
+        // If it's an auth object from the backend, the DNI is typically the username
+        dni = manager.username || manager.document || manager._id;
+      }
+      
+      // Look up by DNI (document) in the members list
+      const found = members.value.find(m => String(m.document) === String(dni));
+      if (found) {
+        return `${found.name || ''} ${found.lastName || ''}`.trim();
+      }
+      
+      // Fallback to displaying DNI
+      return String(dni);
+    };
+
     const tableHeaders = [
       { text: "Nombre", value: "name" },
       { text: "Descripción", value: "description" },
       { text: "Managers", value: "managers" },
+      { text: "Colaboradores", value: "collaborators" },
     ];
 
     const groupsList = computed(() => {
@@ -138,6 +207,8 @@ export default {
       getGroupDetail,
       createNewGroup,
       loading,
+      isManager,
+      getManagerName,
     };
   },
 };

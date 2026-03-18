@@ -41,14 +41,33 @@
                 v-model="group.managers"
                 :items="membersList"
                 :item-title="getMemberLabel"
-                item-value="_id"
+                item-value="document"
+                return-object
                 label="Managers (responsables)"
                 prepend-inner-icon="mdi-account-supervisor-outline"
                 multiple
                 chips
                 closable-chips
                 :loading="loadingMembers"
+              ></v-autocomplete>
+            </v-col>
+          </v-row>
+
+          <!-- Colaboradores -->
+          <v-row>
+            <v-col cols="12">
+              <v-autocomplete
+                v-model="group.collaborators"
+                :items="availableColaboradores"
+                :item-title="getMemberLabel"
+                item-value="document"
                 return-object
+                label="Colaboradores"
+                prepend-inner-icon="mdi-account-multiple-outline"
+                multiple
+                chips
+                closable-chips
+                :loading="loadingMembers"
               ></v-autocomplete>
             </v-col>
           </v-row>
@@ -69,7 +88,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { createGroup } from "@/services/groups";
 import { getMembers } from "@/services/members";
 import { useGroupStore } from "@/store/group";
@@ -81,18 +100,29 @@ export default {
     const router = useRouter();
     const store = useGroupStore();
     const membersList = ref([]);
+    const allMembersList = ref([]);
     const loadingMembers = ref(false);
 
     const group = ref({
       name: "",
       description: "",
       managers: [],
+      collaborators: [],
+    });
+
+    const availableColaboradores = computed(() => {
+      const selectedManagerDocs = new Set(
+        (group.value.managers || []).map(m => m.document || m)
+      );
+      return allMembersList.value.filter((m) => !selectedManagerDocs.has(m.document));
     });
 
     const fetchMembers = async () => {
       try {
         loadingMembers.value = true;
-        membersList.value = await getMembers();
+        const allMembers = await getMembers();
+        allMembersList.value = allMembers;
+        membersList.value = allMembers.filter(m => m.isLider === true);
       } catch (error) {
         console.error("Error fetching members:", error);
       } finally {
@@ -112,7 +142,12 @@ export default {
       try {
         const newGroup = {
           ...group.value,
-          managers: group.value.managers.map((m) => m._id),
+          managers: (group.value.managers || []).map((m) =>
+            typeof m === "object" && m !== null ? String(m.document || m.username || m._id) : String(m)
+          ),
+          collaborators: (group.value.collaborators || []).map((m) =>
+            typeof m === "object" && m !== null ? String(m.document || m.username || m._id) : String(m)
+          ),
         };
         const response = await createGroup(newGroup);
         store.addNewGroup(response);
@@ -129,6 +164,8 @@ export default {
     return {
       group,
       membersList,
+      allMembersList,
+      availableColaboradores,
       loadingMembers,
       getMemberLabel,
       saveGroup,

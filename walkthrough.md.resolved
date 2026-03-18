@@ -1,0 +1,25 @@
+# Walkthrough — Control de Acceso por Roles (RBAC)
+
+## Resumen
+
+Se restringió al completo la creación, edición, visualización y eliminación de Grupos y Grupos Pequeños basándose en el rol del usuario autenticado (`MANAGER` o `LIDER`). Los mánagers son administradores absolutos, mientras que los líderes están "encerrados" dentro del scope de los grupos que se les fueron asignando.
+
+## Archivos modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| [group.controller.ts](file:///Users/leandroarevalo/Desktop/proy_personales/ice_nestjs/src/groups/group.controller.ts) | `@UseGuards(AuthGuard, RolesGuard)` agregado a nivel de clase. Endpoints restringidos: `POST` y `DELETE` solo para `MANAGER`. `GET` y `PUT` permitidos a `MANAGER` y `LIDER`. Se inyectó `req.user` a los métodos de servicio. |
+| [group.service.ts](file:///Users/leandroarevalo/Desktop/proy_personales/ice_nestjs/src/groups/group.service.ts) | Los métodos ahora reciben `user: any`. Si es `LIDER`, [findAll](file:///Users/leandroarevalo/Desktop/proy_personales/ice_nestjs/src/small-groups/small-group.controller.ts#33-36) filtra por su arreglo de `user.assignedGroups`. En [findById](file:///Users/leandroarevalo/Desktop/proy_personales/ice_nestjs/src/groups/group.service.ts#62-81) y [update](file:///Users/leandroarevalo/Desktop/proy_personales/ice_nestjs/src/groups/group.controller.ts#45-52), lanza `ForbiddenException` si intenta interactuar con un grupo ajeno. |
+| [small-group.controller.ts](file:///Users/leandroarevalo/Desktop/proy_personales/ice_nestjs/src/small-groups/small-group.controller.ts) | Guardias de Auth y Rol en todos los endpoints (`MANAGER` y `LIDER`). Inyección de `req.user` hacia el servicio respectivo. |
+| [small-group.service.ts](file:///Users/leandroarevalo/Desktop/proy_personales/ice_nestjs/src/small-groups/small-group.service.ts) | Validaciones RBAC insertadas. Al crear, editar, eliminar o listar, se verifica obligatoriamente que la propiedad `group` (el grupo padre del small group) forme parte del array `user.assignedGroups` del LIDER solicitante. Si no es así, lanza `403 Forbidden` o devuelve arreglos vacíos. |
+
+## Escenarios de uso
+
+1. **Un MANAGER llama a `GET /groups`**: Ve absolutamente todos los grupos.
+2. **Un LIDER llama a `GET /groups`**: Ve un listado de los grupos cuyos IDs figuran en su propio campo `assignedGroups` (adquirido mediante inicio de sesión).
+3. **Un LIDER llama a `POST /small-groups` con un `groupId` no permitido**: La base de datos no es tocada y la API rechaza el intento con un 403.
+4. **Un LIDER llama a `PUT /groups/:id` para uno de sus grupos**: Permite la edición exitosamente (el lider administra SU grupo).
+
+## Verificación
+
+- ✅ `npx tsc --noEmit` — Compila exitosamente sin errores nuevos.

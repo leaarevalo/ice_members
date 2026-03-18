@@ -33,6 +33,12 @@ export const useMemberStore = defineStore("member", {
     isCounselor() {
       return this.user.role === 'counselor';
     },
+    isLider() {
+      return this.user.role === 'lider';
+    },
+    getAssignedGroups() {
+      return this.user.assignedGroups || [];
+    },
     isAuthenticated() {
       return this.user && Object.keys(this.user).length > 0;
     },

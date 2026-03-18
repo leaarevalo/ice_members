@@ -165,14 +165,22 @@
             </v-col>
           </v-row>
 
-          <!-- Tutor -->
+          <!-- Tutor y Rol -->
           <v-row>
-            <v-col cols="12">
+            <v-col cols="12" :md="isManager ? 6 : 12">
               <v-text-field
                 v-model="member.tutorInfo"
                 label="Información del tutor"
                 prepend-inner-icon="mdi-account-supervisor-outline"
               ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="6" v-if="isManager">
+              <v-switch
+                v-model="member.isLider"
+                label="Rol: Líder asignado"
+                color="success"
+                hide-details
+              ></v-switch>
             </v-col>
           </v-row>
 
@@ -223,6 +231,7 @@ export default {
       hasSocialWork: false,
       numberOfChilds: null,
       tutorInfo: "",
+      isLider: false,
     });
 
     const createMember = async () => {

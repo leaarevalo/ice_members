@@ -41,14 +41,34 @@
                 v-model="groupDetail.managers"
                 :items="membersList"
                 :item-title="getMemberLabel"
-                item-value="_id"
+                item-value="document"
+                return-object
                 label="Managers (responsables)"
                 prepend-inner-icon="mdi-account-supervisor-outline"
                 multiple
                 chips
+                :closable-chips="isManager"
+                :readonly="!isManager"
+                :loading="loadingMembers"
+              ></v-autocomplete>
+            </v-col>
+          </v-row>
+
+          <!-- Colaboradores -->
+          <v-row>
+            <v-col cols="12">
+              <v-autocomplete
+                v-model="groupDetail.collaborators"
+                :items="availableColaboradores"
+                :item-title="getMemberLabel"
+                item-value="document"
+                return-object
+                label="Colaboradores"
+                prepend-inner-icon="mdi-account-multiple-outline"
+                multiple
+                chips
                 closable-chips
                 :loading="loadingMembers"
-                return-object
               ></v-autocomplete>
             </v-col>
           </v-row>
@@ -69,10 +89,11 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { updateGroup } from "@/services/groups";
 import { getMembers } from "@/services/members";
 import { useGroupStore } from "@/store/group";
+import { useMemberStore } from "@/store/member";
 import { useRouter } from "vue-router";
 
 export default {
@@ -80,14 +101,43 @@ export default {
   setup() {
     const router = useRouter();
     const store = useGroupStore();
+    const memberStore = useMemberStore();
     const groupDetail = ref({ ...store.getSelectedGroup });
     const membersList = ref([]);
+    const allMembersList = ref([]);
+    const isManager = computed(() => memberStore.isManager);
+
+    const availableColaboradores = computed(() => {
+      const selectedManagerDocs = new Set(
+        (groupDetail.value.managers || []).map(m => m.document || m)
+      );
+      return allMembersList.value.filter((m) => !selectedManagerDocs.has(m.document));
+    });
+
     const loadingMembers = ref(false);
 
     const fetchMembers = async () => {
       try {
         loadingMembers.value = true;
-        membersList.value = await getMembers();
+        const allMembers = await getMembers();
+        allMembersList.value = allMembers;
+        membersList.value = allMembers.filter(m => m.isLider === true);
+
+        if (groupDetail.value.managers && Array.isArray(groupDetail.value.managers)) {
+          groupDetail.value.managers = groupDetail.value.managers.map((m) => {
+            const idToMatch = typeof m === "object" && m !== null ? String(m.document || m.username || m._id) : String(m);
+            const found = allMembersList.value.find(member => String(member.document) === idToMatch || String(member.username) === idToMatch || String(member._id) === idToMatch);
+            return found || m;
+          });
+        }
+
+        if (groupDetail.value.collaborators && Array.isArray(groupDetail.value.collaborators)) {
+          groupDetail.value.collaborators = groupDetail.value.collaborators.map((m) => {
+            const idToMatch = typeof m === "object" && m !== null ? String(m.document || m.username || m._id) : String(m);
+            const found = allMembersList.value.find(member => String(member.document) === idToMatch || String(member.username) === idToMatch || String(member._id) === idToMatch);
+            return found || m;
+          });
+        }
       } catch (error) {
         console.error("Error fetching members:", error);
       } finally {
@@ -107,8 +157,11 @@ export default {
       try {
         const groupToSave = {
           ...groupDetail.value,
-          managers: groupDetail.value.managers.map((m) =>
-            typeof m === "string" ? m : m._id
+          managers: (groupDetail.value.managers || []).map((m) =>
+            typeof m === "object" && m !== null ? String(m.document || m.username || m._id) : String(m)
+          ),
+          collaborators: (groupDetail.value.collaborators || []).map((m) =>
+            typeof m === "object" && m !== null ? String(m.document || m.username || m._id) : String(m)
           ),
         };
         const response = await updateGroup(groupToSave);
@@ -127,7 +180,10 @@ export default {
     return {
       groupDetail,
       membersList,
+      allMembersList,
+      availableColaboradores,
       loadingMembers,
+      isManager,
       getMemberLabel,
       saveGroupInformation,
       goBack,

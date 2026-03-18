@@ -154,6 +154,12 @@ export default {
       if (store.isCounselor) {
         items.push({ icon: "mdi-notebook-heart-outline", title: "Consejería", value: "counseling", href: "/counseling" });
       }
+      if (store.isManager) {
+        items.push({ icon: "mdi-shield-account-outline", title: "Líderes", value: "managers", href: "/managers" });
+      }
+      if (store.isManager || store.isLider) {
+        items.push({ icon: "mdi-account-group", title: "Grupos Pequeños", value: "small-groups", href: "/small-groups" });
+      }
       return items;
     });
 
@@ -173,6 +179,7 @@ export default {
 
     const userRole = computed(() => {
       if (store.isManager) return "Administrador";
+      if (store.isLider) return "Líder";
       if (store.isCounselor) return "Consejero";
       return "Miembro";
     });
