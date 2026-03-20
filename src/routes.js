@@ -9,6 +9,14 @@ import CounselingView from "./components/counseling/CounselingView.vue";
 import ManagersList from "./components/managers/ManagersList.vue";
 import SmallGroupsView from "./components/small-groups/SmallGroupsView.vue";
 import SmallGroupDetail from "./components/small-groups/SmallGroupDetail.vue";
+import SchoolsList from "./components/schools/SchoolsList.vue";
+import CreateSchool from "./components/schools/CreateSchool.vue";
+import SchoolDetail from "./components/schools/SchoolDetail.vue";
+import StudentModules from "./components/schools/StudentModules.vue";
+import StudentModuleDetail from "./components/schools/StudentModuleDetail.vue";
+import ProfessorModules from "./components/schools/ProfessorModules.vue";
+import ProfessorModuleDetail from "./components/schools/ProfessorModuleDetail.vue";
+import ProfessorEnrollments from "./components/schools/ProfessorEnrollments.vue";
 import Login from "./components/Login.vue"
 import Home from "./components/Home.vue"
 import { isAuthenticated } from "./services/login.js";
@@ -27,6 +35,14 @@ const routes = [
   { path: "/managers", component: ManagersList, meta: { requiresAuth: true } },
   { path: "/small-groups", component: SmallGroupsView, meta: { requiresAuth: true } },
   { path: "/small-groups/detail", component: SmallGroupDetail, meta: { requiresAuth: true } },
+  { path: "/schools", component: SchoolsList, meta: { requiresAuth: true } },
+  { path: "/schools/new", component: CreateSchool, meta: { requiresAuth: true } },
+  { path: "/schools/detail", component: SchoolDetail, meta: { requiresAuth: true } },
+  { path: "/schools/modules", component: StudentModules, meta: { requiresAuth: true } },
+  { path: "/schools/module", component: StudentModuleDetail, meta: { requiresAuth: true } },
+  { path: "/professor", component: ProfessorModules, meta: { requiresAuth: true } },
+  { path: "/professor/module", component: ProfessorModuleDetail, meta: { requiresAuth: true } },
+  { path: "/professor/enrollments", component: ProfessorEnrollments, meta: { requiresAuth: true } },
 ];
 
 const router = VueRouter.createRouter({

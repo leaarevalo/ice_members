@@ -17,6 +17,7 @@
                 v-model="groupDetail.name"
                 label="Nombre del grupo"
                 prepend-inner-icon="mdi-account-group-outline"
+                :readonly="isUser"
                 required
               ></v-text-field>
             </v-col>
@@ -30,6 +31,7 @@
                 label="Descripción"
                 prepend-inner-icon="mdi-text-box-outline"
                 rows="3"
+                :readonly="isUser"
               ></v-textarea>
             </v-col>
           </v-row>
@@ -47,8 +49,8 @@
                 prepend-inner-icon="mdi-account-supervisor-outline"
                 multiple
                 chips
-                :closable-chips="isManager"
-                :readonly="!isManager"
+                :closable-chips="isManager && !isUser"
+                :readonly="!isManager || isUser"
                 :loading="loadingMembers"
               ></v-autocomplete>
             </v-col>
@@ -67,7 +69,8 @@
                 prepend-inner-icon="mdi-account-multiple-outline"
                 multiple
                 chips
-                closable-chips
+                :closable-chips="!isUser"
+                :readonly="isUser"
                 :loading="loadingMembers"
               ></v-autocomplete>
             </v-col>
@@ -79,7 +82,7 @@
           <v-btn variant="outlined" color="secondary" @click="goBack" prepend-icon="mdi-arrow-left">
             Volver
           </v-btn>
-          <v-btn color="primary" @click="saveGroupInformation" prepend-icon="mdi-content-save-outline">
+          <v-btn v-if="!isUser" color="primary" @click="saveGroupInformation" prepend-icon="mdi-content-save-outline">
             Guardar cambios
           </v-btn>
         </div>
@@ -106,6 +109,7 @@ export default {
     const membersList = ref([]);
     const allMembersList = ref([]);
     const isManager = computed(() => memberStore.isManager);
+    const isUser = computed(() => !memberStore.isManager && !memberStore.isLider);
 
     const availableColaboradores = computed(() => {
       const selectedManagerDocs = new Set(
@@ -184,6 +188,7 @@ export default {
       availableColaboradores,
       loadingMembers,
       isManager,
+      isUser,
       getMemberLabel,
       saveGroupInformation,
       goBack,

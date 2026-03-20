@@ -6,6 +6,8 @@ export const useMemberStore = defineStore("member", {
       membersOperations: [],
       selectedMember: {},
       user: {},
+      professorFlag: false,
+      studentFlag: false,
     };
   },
   persist: {
@@ -42,6 +44,12 @@ export const useMemberStore = defineStore("member", {
     isAuthenticated() {
       return this.user && Object.keys(this.user).length > 0;
     },
+    isProfessor() {
+      return this.professorFlag;
+    },
+    isStudent() {
+      return this.studentFlag;
+    },
   },
   actions: {
     setSelectedMember(member) {
@@ -68,6 +76,14 @@ export const useMemberStore = defineStore("member", {
     },
     removeUser() {
       this.user = {};
+      this.professorFlag = false;
+      this.studentFlag = false;
+    },
+    setProfessor(value) {
+      this.professorFlag = value;
+    },
+    setStudent(value) {
+      this.studentFlag = value;
     },
     initializeUser() {
       // This action will be called to ensure user is loaded from persisted state

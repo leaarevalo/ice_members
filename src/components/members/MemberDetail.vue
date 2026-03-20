@@ -18,6 +18,7 @@
                 label="Documento (DNI/CI)"
                 :rules="[v => !!v || 'El documento es obligatorio']"
                 prepend-inner-icon="mdi-card-account-details-outline"
+                :readonly="isUser"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -30,6 +31,7 @@
                 label="Nombre"
                 :rules="[v => !!v || 'El nombre es obligatorio']"
                 prepend-inner-icon="mdi-account-outline"
+                :readonly="isUser"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6">
@@ -37,6 +39,7 @@
                 v-model="memberDetail.lastName"
                 label="Apellido"
                 :rules="[v => !!v || 'El apellido es obligatorio']"
+                :readonly="isUser"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -48,6 +51,7 @@
                 v-model="memberDetail.phone"
                 label="Teléfono"
                 prepend-inner-icon="mdi-phone-outline"
+                :readonly="isUser"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6">
@@ -55,6 +59,7 @@
                 v-model="memberDetail.email"
                 label="Email"
                 prepend-inner-icon="mdi-email-outline"
+                :readonly="isUser"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -66,6 +71,7 @@
                 v-model="memberDetail.civilState"
                 label="Estado civil"
                 prepend-inner-icon="mdi-heart-outline"
+                :readonly="isUser"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6">
@@ -74,6 +80,7 @@
                 label="Fecha de matrimonio"
                 type="date"
                 prepend-inner-icon="mdi-ring"
+                :readonly="isUser"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -85,12 +92,14 @@
                 v-model="memberDetail.belongToCelula"
                 label="Célula a la que pertenece"
                 prepend-inner-icon="mdi-account-multiple-outline"
+                :readonly="isUser"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
                 v-model="memberDetail.belongToGroup"
                 label="Grupo al que pertenece"
+                :readonly="isUser"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -103,6 +112,7 @@
                 label="Fecha de nacimiento"
                 type="date"
                 prepend-inner-icon="mdi-cake-variant-outline"
+                :readonly="isUser"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6">
@@ -111,6 +121,7 @@
                 label="Fecha de conversión"
                 type="date"
                 prepend-inner-icon="mdi-cross"
+                :readonly="isUser"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -122,6 +133,7 @@
                 v-model="memberDetail.address"
                 label="Dirección"
                 prepend-inner-icon="mdi-map-marker-outline"
+                :readonly="isUser"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -133,6 +145,7 @@
                 v-model="memberDetail.studyStatus"
                 label="Nivel de estudios"
                 prepend-inner-icon="mdi-school-outline"
+                :readonly="isUser"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6">
@@ -140,6 +153,7 @@
                 v-model="memberDetail.ocupation"
                 label="Ocupación"
                 prepend-inner-icon="mdi-briefcase-outline"
+                :readonly="isUser"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -152,6 +166,8 @@
                 label="Tiene obra social"
                 color="primary"
                 hide-details
+                :readonly="isUser"
+                :disabled="isUser"
               ></v-switch>
             </v-col>
             <v-col cols="12" md="6">
@@ -161,6 +177,7 @@
                 type="number"
                 min="0"
                 prepend-inner-icon="mdi-human-male-child"
+                :readonly="isUser"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -172,15 +189,18 @@
                 v-model="memberDetail.tutorInfo"
                 label="Información del tutor"
                 prepend-inner-icon="mdi-account-supervisor-outline"
+                :readonly="isUser"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6" v-if="isManager">
-              <v-switch
-                v-model="memberDetail.isLider"
-                label="Rol: Líder asignado"
-                color="success"
-                hide-details
-              ></v-switch>
+              <v-select
+                v-model="memberDetail.role"
+                :items="roleOptions"
+                item-title="label"
+                item-value="value"
+                label="Rol"
+                prepend-inner-icon="mdi-shield-account-outline"
+              ></v-select>
             </v-col>
           </v-row>
 
@@ -191,7 +211,7 @@
           <v-btn variant="outlined" color="secondary" @click="goBack" prepend-icon="mdi-arrow-left">
             Volver
           </v-btn>
-          <v-btn color="primary" @click="saveMemberInformation" prepend-icon="mdi-content-save-outline">
+          <v-btn v-if="!isUser" color="primary" @click="saveMemberInformation" prepend-icon="mdi-content-save-outline">
             Guardar cambios
           </v-btn>
         </div>
@@ -221,7 +241,14 @@ export default {
     // Initialize user from store first
     store.initializeUser();
     const isManager = computed(() => store.isManager);
+    const isUser = computed(() => !store.isManager && !store.isLider);
     const form = ref(null);
+    const roleOptions = [
+      { label: "Usuario", value: "user" },
+      { label: "Líder", value: "lider" },
+      { label: "Manager", value: "manager" },
+      { label: "Consejero", value: "counselor" },
+    ];
 
     const saveMemberInformation = async () => {
       const { valid } = await form.value.validate();
@@ -237,6 +264,8 @@ export default {
     return {
       memberDetail,
       isManager,
+      isUser,
+      roleOptions,
       saveMemberInformation,
       goBack,
       form,

@@ -23,6 +23,8 @@ export async function createNewMember(member) {
     dateOfBirth: member.dateOfBirth,
     dateOfConversion: member.dateOfConversion,
     phone: member.phone,
+    password: member.password,
+    role: member.role,
     address: member.address,
     civilState: member.civilState,
     marriageDate: member.marriageDate,

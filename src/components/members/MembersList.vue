@@ -7,6 +7,7 @@
         <p class="page-subtitle">Gestión de miembros de la iglesia</p>
       </div>
       <v-btn
+        v-if="!isUser"
         color="primary"
         prepend-icon="mdi-plus"
         class="new-member-btn"
@@ -60,6 +61,7 @@ export default {
   name: "MembersList",
   setup() {
     let store = useMemberStore();
+    const isUser = !store.isManager && !store.isLider;
 
     const searchValue = ref("");
     const router = useRouter();
@@ -129,6 +131,7 @@ export default {
       createNewMember,
       loading,
       formatDate,
+      isUser,
     };
   },
 };

@@ -122,7 +122,7 @@ export default {
         loadingMembers.value = true;
         const allMembers = await getMembers();
         allMembersList.value = allMembers;
-        membersList.value = allMembers.filter(m => m.isLider === true);
+        membersList.value = allMembers.filter(m => m.role === 'lider');
       } catch (error) {
         console.error("Error fetching members:", error);
       } finally {

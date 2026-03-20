@@ -6,7 +6,7 @@
         <p class="page-subtitle">Gestioná tus grupos asignados y sus subgrupos</p>
       </div>
       <v-btn
-        v-if="isManager || assignedGroups.length > 0"
+        v-if="!isUser && (isManager || assignedGroups.length > 0)"
         color="primary"
         prepend-icon="mdi-plus"
         class="new-small-group-btn"
@@ -34,7 +34,7 @@
               clearable
             ></v-autocomplete>
           </v-col>
-          <v-col cols="12" md="6" class="text-md-right text-left mt-4 mt-md-0" v-if="selectedParentGroup">
+          <v-col cols="12" md="6" class="text-md-right text-left mt-4 mt-md-0" v-if="selectedParentGroup && !isUser">
             <v-btn
               color="primary"
               prepend-icon="mdi-plus"
@@ -192,6 +192,7 @@ export default {
 
     const isManager = store.isManager;
     const isLider = store.isLider;
+    const isUser = !isManager && !isLider;
     
     // Create form state
     const createDialog = ref(false);
@@ -224,16 +225,26 @@ export default {
     const fetchAllData = async () => {
       loading.value = true;
       try {
-        const [allGrps, members] = await Promise.all([
-          getGroups(),
-          getMembers(),
-        ]);
+        const allGrps = await getGroups();
         allGroups.value = allGrps;
-        allMembersList.value = members;
 
         if (isManager && !isLider) {
           // Admin can see everything
+          const [members] = await Promise.all([getMembers()]);
+          allMembersList.value = members;
           smallGroups.value = await getSmallGroups();
+        } else if (isUser) {
+          // User can view small groups by fetching per group
+          let fetchedGroups = [];
+          for (let group of allGrps) {
+            try {
+              const res = await getSmallGroupsByGroup(group._id);
+              fetchedGroups.push(...res);
+            } catch (e) {
+              // Skip groups the user can't access
+            }
+          }
+          smallGroups.value = fetchedGroups;
         } else if (assignedGroups.value.length > 0) {
           // Lider fetches only for assigned groups
           let fetchedGroups = [];
@@ -288,6 +299,9 @@ export default {
 
     const parentGroupOptions = computed(() => {
       if (isManager && !isLider) {
+        return allGroups.value;
+      }
+      if (isUser) {
         return allGroups.value;
       }
       return assignedGroups.value;
@@ -374,6 +388,7 @@ export default {
       closeCreateDialog,
       saveSmallGroup,
       isManager,
+      isUser,
     };
   },
 };

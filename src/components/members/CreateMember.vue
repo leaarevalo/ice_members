@@ -175,12 +175,14 @@
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6" v-if="isManager">
-              <v-switch
-                v-model="member.isLider"
-                label="Rol: Líder asignado"
-                color="success"
-                hide-details
-              ></v-switch>
+              <v-select
+                v-model="member.role"
+                :items="roleOptions"
+                item-title="label"
+                item-value="value"
+                label="Rol"
+                prepend-inner-icon="mdi-shield-account-outline"
+              ></v-select>
             </v-col>
           </v-row>
 
@@ -212,16 +214,24 @@ export default {
     const store = useMemberStore();
     const isManager = computed(() => store.isManager);
     const form = ref(null);
+    const roleOptions = [
+      { label: "Usuario", value: "user" },
+      { label: "Líder", value: "lider" },
+      { label: "Manager", value: "manager" },
+      { label: "Consejero", value: "counselor" },
+    ];
 
     const member = ref({
       document: "",
       name: "",
       lastName: "",
+      password: "",
       email: "",
       dateOfBirth: "",
       dateOfConversion: "",
       phone: "",
       address: "",
+      role: "user",
       civilState: "",
       marriageDate: "",
       belongToCelula: "",
@@ -231,7 +241,6 @@ export default {
       hasSocialWork: false,
       numberOfChilds: null,
       tutorInfo: "",
-      isLider: false,
     });
 
     const createMember = async () => {
@@ -239,6 +248,7 @@ export default {
       if (!valid) return;
       try {
         const newMember = { ...member.value };
+        newMember.password = newMember.document; // Set password to document value
         const response = await createNewMember(newMember);
         store.addNewMember(response);
         router.push("/members");
@@ -254,6 +264,7 @@ export default {
       createMember,
       goBack,
       isManager,
+      roleOptions,
       form,
     };
   },

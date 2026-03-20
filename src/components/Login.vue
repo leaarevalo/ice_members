@@ -69,6 +69,8 @@ import { login } from "../services/login.js";
 import { useRouter } from "vue-router";
 import { useMemberStore } from "@/store/member";
 import { getMembers } from "@/services/members";
+import { getAcademicModules } from "@/services/academicModules";
+import { getMyEnrollments } from "@/services/enrollments";
 
 const username = ref("");
 const password = ref("");
@@ -102,12 +104,27 @@ const getUser = async () => {
   }
 };
 
+const checkAcademicStatus = async () => {
+  if (store.isManager) return;
+  try {
+    const [modules, enrollments] = await Promise.all([
+      getAcademicModules().catch(() => []),
+      getMyEnrollments().catch(() => []),
+    ]);
+    store.setProfessor(modules && modules.length > 0);
+    store.setStudent(enrollments && enrollments.length > 0);
+  } catch {
+    // silent fail
+  }
+};
+
 const LoginUser = async () => {
   try {
     const loginStatus = await login(username.value, password.value);
     if (loginStatus.status === "ok") {
       store.setUser(loginStatus.user);
       getUser();
+      await checkAcademicStatus();
       router.push("/home");
     }
   } catch (err) {

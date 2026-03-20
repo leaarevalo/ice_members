@@ -5,7 +5,7 @@ const url = process.env.VUE_APP_MEMBERS_URL;
 export async function login(username, password) {
   try {
     const { data } = await axios.post(`${url}/auth/login`, {
-      username: username,
+      document: username,
       password: password
     });
 

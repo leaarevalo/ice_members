@@ -129,6 +129,8 @@
 <script>
 import { useMemberStore } from "@/store/member";
 import { updatePassword } from "@/services/login";
+import { getAcademicModules } from "@/services/academicModules";
+import { getMyEnrollments } from "@/services/enrollments";
 import { useRouter } from "vue-router";
 import { onMounted, computed, ref, reactive } from "vue";
 
@@ -145,26 +147,58 @@ export default {
     const savingPassword = ref(false);
     const snackbar = reactive({ show: false, text: "", color: "" });
 
+    const isUser = computed(() => store.getUser?.role === 'user');
+
     const navItems = computed(() => {
       const items = [
         { icon: "mdi-view-dashboard-outline", title: "Inicio", value: "home", href: "/home" },
-        { icon: "mdi-account-group-outline", title: "Miembros", value: "members", href: "/members" },
-        { icon: "mdi-account-supervisor-outline", title: "Grupos", value: "groups", href: "/groups" },
       ];
+      if (!isUser.value) {
+        items.push({ icon: "mdi-account-group-outline", title: "Miembros", value: "members", href: "/members" });
+      }
+      items.push({ icon: "mdi-account-supervisor-outline", title: "Grupos", value: "groups", href: "/groups" });
       if (store.isCounselor) {
         items.push({ icon: "mdi-notebook-heart-outline", title: "Consejería", value: "counseling", href: "/counseling" });
       }
       if (store.isManager) {
         items.push({ icon: "mdi-shield-account-outline", title: "Líderes", value: "managers", href: "/managers" });
       }
-      if (store.isManager || store.isLider) {
-        items.push({ icon: "mdi-account-group", title: "Grupos Pequeños", value: "small-groups", href: "/small-groups" });
+      items.push({ icon: "mdi-account-group", title: "Grupos Pequeños", value: "small-groups", href: "/small-groups" });
+      if (store.isProfessor) {
+        items.push({ icon: "mdi-human-male-board", title: "Mis Módulos", value: "professor", href: "/professor" });
+      }
+      if (store.isManager) {
+        items.push({ icon: "mdi-school-outline", title: "Escuelas", value: "schools", href: "/schools" });
+      } else if (store.isStudent) {
+        items.push({ icon: "mdi-school-outline", title: "Mis Inscripciones", value: "schools", href: "/schools" });
       }
       return items;
     });
 
+    const checkProfessorStatus = async () => {
+      try {
+        const modules = await getAcademicModules();
+        store.setProfessor(modules && modules.length > 0);
+      } catch {
+        store.setProfessor(false);
+      }
+    };
+
+    const checkStudentStatus = async () => {
+      try {
+        const enrollments = await getMyEnrollments();
+        store.setStudent(enrollments && enrollments.length > 0);
+      } catch {
+        store.setStudent(false);
+      }
+    };
+
     onMounted(() => {
       store.initializeUser();
+      if (store.isAuthenticated && !store.isManager) {
+        checkProfessorStatus();
+        checkStudentStatus();
+      }
     });
 
     const userName = computed(() => {
